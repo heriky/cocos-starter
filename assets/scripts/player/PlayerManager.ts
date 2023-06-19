@@ -13,7 +13,7 @@ import { EventManager } from '../../runtime/EventManager';
 import { PlayerStateMachine } from './PlayerStateMachine';
 import { EntityManager } from '../../base/EntityManager';
 import { DataManager } from '../../runtime/DataManager';
-import { BlockCheck } from './BlockCheck';
+import { BlockCheck } from '../../utils/BlockCheck';
 
 const { ccclass } = _decorator;
 
@@ -57,7 +57,14 @@ export class PlayerManager extends EntityManager {
 
   inputHandler(ctrl: CONTORLLER_ENUM) {
     if (BlockCheck.willBlock(ctrl, { x: this.targetX, y: this.targetY, direction: this.direction! })) {
-      return;
+      
+      if (ctrl === CONTORLLER_ENUM.TOP) return this.state = ENTITY_STATE.BLOCK_FRONT;
+      if (ctrl === CONTORLLER_ENUM.BOTTOM) return this.state = ENTITY_STATE.BLOCK_BACK;
+      if (ctrl === CONTORLLER_ENUM.LEFT) return this.state = ENTITY_STATE.BLOCK_LEFT;
+      if (ctrl === CONTORLLER_ENUM.RIGHT) return this.state = ENTITY_STATE.BLOCK_RIGHT;
+      if (ctrl === CONTORLLER_ENUM.TURN_LEFT) return this.state = ENTITY_STATE.BLOCK_TURN_LEFT;
+      if (ctrl === CONTORLLER_ENUM.TURN_RIGHT) return this.state = ENTITY_STATE.BLOCK_TRUN_RIGHT;
+
     }
     this.move(ctrl);
   }

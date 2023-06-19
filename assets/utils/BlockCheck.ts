@@ -1,5 +1,5 @@
-import { CONTORLLER_ENUM, ENTITY_DIRECTION } from '../../enums';
-import { DataManager } from '../../runtime/DataManager';
+import { CONTORLLER_ENUM, ENTITY_DIRECTION } from '../enums';
+import { DataManager } from '../runtime/DataManager';
 
 export class BlockCheck {
   static willBlock(ctrl: CONTORLLER_ENUM, info: { x: number; y: number; direction: ENTITY_DIRECTION }) {
