@@ -24,8 +24,6 @@ export class PlayerManager extends EntityManager {
 
   private readonly speed = 1 / 10; // 放在update中时，表示一帧移动 1/10个单位
 
-  fsm: PlayerStateMachine | null = null;
-
   onLoad() {
     EventManager.instance.on(EventEnums.CTRL, this.inputHandler, this);
   }

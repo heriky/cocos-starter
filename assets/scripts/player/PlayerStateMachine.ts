@@ -4,7 +4,8 @@ import { ENTITY_STATE, STATE_PARAMS_NAME, STATE_PARAMS_TYPE } from '../../enums'
 import { StateMachine, getNumerInitValue, getTriggerInitValue } from '../../base/StateMachine';
 import { IdleSubStateMachine } from './IdleSubStateMachine';
 import { TurnSubStateMachine } from './TurnSubStateMachine';
-import { BlockFrontStateMachine } from './BlockSubStateMachine';
+import { BlockSubStateMachine } from './BlockSubStateMachine';
+import { PlayerManager } from './PlayerManager';
 
 const { ccclass } = _decorator;
 
@@ -33,32 +34,53 @@ export class PlayerStateMachine extends StateMachine {
   }
 
   initParams() {
-    this.paramsMap.set(STATE_PARAMS_NAME.IDLE, getTriggerInitValue());
-    this.paramsMap.set(STATE_PARAMS_NAME.TURN_LEFT, getTriggerInitValue());
-    this.paramsMap.set(STATE_PARAMS_NAME.TURN_RIGHT, getTriggerInitValue());
 
-    this.paramsMap.set(STATE_PARAMS_NAME.BLOCK_FRONT, getTriggerInitValue());
-    this.paramsMap.set(STATE_PARAMS_NAME.BLOCK_BACK, getTriggerInitValue());
-    this.paramsMap.set(STATE_PARAMS_NAME.BLOCK_LEFT, getTriggerInitValue());
-    this.paramsMap.set(STATE_PARAMS_NAME.BLOCK_RIGHT, getTriggerInitValue());
-    this.paramsMap.set(STATE_PARAMS_NAME.BLOCK_TURN_LEFT, getTriggerInitValue());
-    this.paramsMap.set(STATE_PARAMS_NAME.BLOCK_TRUN_RIGHT, getTriggerInitValue());
+    const triggerParamNames = [
+      STATE_PARAMS_NAME.IDLE, 
+
+      STATE_PARAMS_NAME.TURN_LEFT,
+      STATE_PARAMS_NAME.TURN_RIGHT,
+
+      STATE_PARAMS_NAME.BLOCK_FRONT, 
+      STATE_PARAMS_NAME.BLOCK_BACK,
+      STATE_PARAMS_NAME.BLOCK_LEFT,
+      STATE_PARAMS_NAME.BLOCK_RIGHT,
+      STATE_PARAMS_NAME.BLOCK_TURN_LEFT,
+      STATE_PARAMS_NAME.BLOCK_TRUN_RIGHT,
+    ];
+
+    // 注册【触发器】类型参数
+    triggerParamNames.forEach(param => {
+      this.paramsMap.set(param, getTriggerInitValue());
+    });
 
 
+    // 注册【数字】类型参数
     this.paramsMap.set(STATE_PARAMS_NAME.DIRECTION, getNumerInitValue());
   }
 
   initState() {
     this.stateMap.set(ENTITY_STATE.IDLE, new IdleSubStateMachine(this));
-    this.stateMap.set(ENTITY_STATE.TURN_LEFT, new TurnSubStateMachine(this, ENTITY_STATE.TURN_LEFT));
-    this.stateMap.set(ENTITY_STATE.TURN_RIGHT, new TurnSubStateMachine(this, ENTITY_STATE.TURN_RIGHT));
 
-    this.stateMap.set(ENTITY_STATE.BLOCK_FRONT, new BlockFrontStateMachine(this, ENTITY_STATE.BLOCK_FRONT));
-    this.stateMap.set(ENTITY_STATE.BLOCK_BACK, new BlockFrontStateMachine(this, ENTITY_STATE.BLOCK_BACK));
-    this.stateMap.set(ENTITY_STATE.BLOCK_LEFT, new BlockFrontStateMachine(this, ENTITY_STATE.BLOCK_LEFT));
-    this.stateMap.set(ENTITY_STATE.BLOCK_RIGHT, new BlockFrontStateMachine(this, ENTITY_STATE.BLOCK_RIGHT));
-    this.stateMap.set(ENTITY_STATE.BLOCK_TURN_LEFT, new BlockFrontStateMachine(this, ENTITY_STATE.BLOCK_TURN_LEFT));
-    this.stateMap.set(ENTITY_STATE.BLOCK_TRUN_RIGHT, new BlockFrontStateMachine(this, ENTITY_STATE.BLOCK_TRUN_RIGHT));
+    // 注册turn状态机
+    const turnMachine = [ENTITY_STATE.TURN_LEFT, ENTITY_STATE.TURN_RIGHT];
+    turnMachine.forEach(stateName => {
+      this.stateMap.set(stateName, new TurnSubStateMachine(this, stateName));
+    });
+
+
+    // 注册block状态机
+    const blockMachine = [
+      ENTITY_STATE.BLOCK_FRONT,
+      ENTITY_STATE.BLOCK_BACK,
+      ENTITY_STATE.BLOCK_LEFT,
+      ENTITY_STATE.BLOCK_RIGHT,
+      ENTITY_STATE.BLOCK_TURN_LEFT,
+      ENTITY_STATE.BLOCK_TRUN_RIGHT,
+    ];
+    blockMachine.forEach(stateName => {
+      this.stateMap.set(stateName, new BlockSubStateMachine(this, stateName));
+    });
 
   }
 
@@ -68,7 +90,10 @@ export class PlayerStateMachine extends StateMachine {
       const name = this.animationComponent.defaultClip?.name;
       const whiteList = ['turn', 'block'];
       if (whiteList.some(item => name?.includes(item))) {
-        this.setParams(STATE_PARAMS_NAME.IDLE, true);
+        // this.setParams(STATE_PARAMS_NAME.IDLE, true);
+
+        //@ts-ignore
+        this.getComponent(PlayerManager).state = STATE_PARAMS_NAME.IDLE;
       }
     });
   }

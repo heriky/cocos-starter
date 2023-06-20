@@ -13,7 +13,7 @@ const TURN_ANIM_BASE_URL: { [key: string]: string } = {
 
 };
 
-export class BlockFrontStateMachine extends DirectionStateMachine {
+export class BlockSubStateMachine extends DirectionStateMachine {
   constructor(fsm: StateMachine, state: ENTITY_STATE = ENTITY_STATE.BLOCK_FRONT) {
     super(fsm);
 

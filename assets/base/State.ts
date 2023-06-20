@@ -1,5 +1,6 @@
 import { AnimationClip, Sprite, SpriteFrame, animation } from 'cc';
 import { ResourceManager } from '../runtime/ResourceManager';
+import { orderSpriteFrames } from '../utils';
 import { StateMachine } from './StateMachine';
 
 /**
@@ -25,6 +26,7 @@ export class State {
     const pm = ResourceManager.instance.loadDirRes<SpriteFrame>(this.animPath);
     this.fsm.waitingList.push(pm);
     const spriteFrames = await pm;
+    orderSpriteFrames(spriteFrames); // 加载文件夹获取的数据恐怕是乱序的，这里为了帧动画正确，需要排序
 
     const clip = new AnimationClip();
     this.clip = clip;

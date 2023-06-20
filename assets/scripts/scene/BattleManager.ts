@@ -7,6 +7,7 @@ import { DataManager } from '../../runtime/DataManager';
 import { EventManager } from '../../runtime/EventManager';
 import { EventEnums } from '../../enums';
 import { PlayerManager } from '../player/PlayerManager';
+import { WoodenManager } from '../wooden/WoodenManager';
 
 const { ccclass } = _decorator;
 
@@ -40,6 +41,7 @@ export class BattleManager extends Component {
 
     this.generateTileMap();
     this.generatePlayer();
+    this.generateEnemies();
   }
 
   nextLevel() {
@@ -77,6 +79,16 @@ export class BattleManager extends Component {
 
     const playerManager = player.addComponent(PlayerManager);
     playerManager.init();
+  }
+
+  generateEnemies() {
+    const enemy = createUINode();
+    // 这里一定要挂在stage上，而不是在canvas上，否则stage的偏移就无法应用了
+    // !挂在stage上时，坐标的（0， 0）点就在stage的左上角
+    enemy.parent = this.stage;
+
+    const woodenManager = enemy.addComponent(WoodenManager);
+    woodenManager.init();
   }
 
   private adjustStage() {

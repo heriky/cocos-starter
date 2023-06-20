@@ -2,8 +2,8 @@ import { AnimationClip, Component, Sprite, SpriteFrame, _decorator, Animation, a
 import { ENTITY_DIRECTION_ORDER, ENTITY_DIRECTION, ENTITY_STATE, STATE_PARAMS_NAME, EntityType } from '../enums';
 
 import { IEntity } from '../enums';
-import { PlayerStateMachine } from '../scripts/player/PlayerStateMachine';
 import { TILE_HEIGHT, TILE_WIDTH } from '../scripts/tile/TileManager';
+import { StateMachine } from './StateMachine';
 
 const { ccclass } = _decorator;
 
@@ -16,7 +16,7 @@ export abstract class EntityManager extends Component {
   private _state: ENTITY_STATE | null = null;
   private _direction: ENTITY_DIRECTION | null = null;
 
-  abstract fsm: PlayerStateMachine | null;
+  fsm: StateMachine | null = null;
 
   get state() {
     return this._state;

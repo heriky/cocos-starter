@@ -3,13 +3,13 @@ import { State } from '../../base/State';
 import { StateMachine } from '../../base/StateMachine';
 import { ENTITY_DIRECTION, ENTITY_STATE } from '../../enums';
 
-const TURN_ANIM_BASE_URL = {
+const TURN_ANIM_BASE_URL: Record<string, string> = {
   [ENTITY_STATE.TURN_LEFT]: 'texture/player/turnleft',
   [ENTITY_STATE.TURN_RIGHT]: 'texture/player/turnright',
 };
 
 export class TurnSubStateMachine extends DirectionStateMachine {
-  constructor(fsm: StateMachine, state: ENTITY_STATE.TURN_LEFT | ENTITY_STATE.TURN_RIGHT = ENTITY_STATE.TURN_LEFT) {
+  constructor(fsm: StateMachine, state: ENTITY_STATE = ENTITY_STATE.TURN_LEFT) {
     super(fsm);
 
     const BASE_URL = TURN_ANIM_BASE_URL[state];
