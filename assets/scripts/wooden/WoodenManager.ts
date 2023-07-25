@@ -12,6 +12,7 @@ import {
 import { EventManager } from '../../runtime/EventManager';
 import { WoodenStateMachine } from './WoodenStateMachine';
 import { EntityManager } from '../../base/EntityManager';
+import { DataManager } from '../../runtime/DataManager';
 
 const { ccclass } = _decorator;
 
@@ -31,7 +32,29 @@ export class WoodenManager extends EntityManager {
       type: EntityType.PLAYER,
     });
 
+    EventManager.instance.on(EventEnums.ENEMY_FORWARD, this.changeDirection, this);
+
   }
 
-  
+  changeDirection() {
+
+    const { x: playerX, y: playerY } = DataManager.instance.player;
+    const deltaX = playerX - this.x;
+    const deltaY = playerY - this.y;
+
+    if(playerX > this.x && playerY < this.y) {
+      // 第一象限
+      this.direction = deltaX > deltaY ? ENTITY_DIRECTION.RIGHT : ENTITY_DIRECTION.TOP;
+    } else if(playerX < this.x && playerY < this.y) {
+      // 第二象限
+      this.direction = deltaX > deltaY ? ENTITY_DIRECTION.LEFT : ENTITY_DIRECTION.TOP;
+    } else if(playerX < this.x && playerY > this.y) {
+      // 第三象限
+      this.direction = deltaX > deltaY ? ENTITY_DIRECTION.LEFT : ENTITY_DIRECTION.BOTTOM;
+    } else if (playerX > this.x && playerY > this.y) {
+      // 第四象限
+      this.direction = deltaX > deltaY ? ENTITY_DIRECTION.RIGHT : ENTITY_DIRECTION.BOTTOM;
+    }
+
+  }
 }

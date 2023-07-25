@@ -140,11 +140,13 @@ export class PlayerManager extends EntityManager {
     const deltaX = Math.abs(this.x - this.targetX);
     if (deltaX <= 0.1 && deltaX > 0) {
       this.x = this.targetX;
+      EventManager.instance.emit(EventEnums.ENEMY_FORWARD);
     }
 
     const deltaY = Math.abs(this.y - this.targetY);
     if (deltaY <= 0.1 && deltaY > 0) {
       this.y = this.targetY;
+      EventManager.instance.emit(EventEnums.ENEMY_FORWARD);
     }
   }
 }

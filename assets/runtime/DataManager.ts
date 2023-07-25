@@ -1,6 +1,8 @@
 import { Singleton } from '../base/Singleton';
 import { Level } from '../levels';
+import { PlayerManager } from '../scripts/player/PlayerManager';
 import { TileManager } from '../scripts/tile/TileManager';
+import { WoodenManager } from '../scripts/wooden/WoodenManager';
 
 export class DataManager extends Singleton {
   static get instance() {
@@ -12,6 +14,9 @@ export class DataManager extends Singleton {
   tileInfo: TileManager[][] = [];
 
   levelIndex = -1;
+
+  player: PlayerManager = null!;
+  enemies: WoodenManager[] = [];
 
   get columnCount() {
     return this.mapInfo[0]?.length ?? 0;

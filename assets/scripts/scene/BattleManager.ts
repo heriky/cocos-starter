@@ -79,6 +79,8 @@ export class BattleManager extends Component {
 
     const playerManager = player.addComponent(PlayerManager);
     playerManager.init();
+
+    DataManager.instance.player = playerManager;
   }
 
   generateEnemies() {
@@ -89,6 +91,8 @@ export class BattleManager extends Component {
 
     const woodenManager = enemy.addComponent(WoodenManager);
     woodenManager.init();
+
+    DataManager.instance.enemies.push(woodenManager);
   }
 
   private adjustStage() {

@@ -14,6 +14,7 @@ export enum TILE_TYPE_ENUM {
 export enum EventEnums {
   NEXT_LEVEL = 'next_level',
   CTRL = 'CONTORLLER',
+  ENEMY_FORWARD = 'enemy_FORWARD', // 敌人朝向
 }
 
 export enum CONTORLLER_ENUM {

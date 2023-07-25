@@ -41,6 +41,10 @@ export class State {
   }
 
   run() {
+    // 判断当前动画是否在播放，相当于实现了isPlaying的功能
+    if(this.fsm.animationComponent.defaultClip?.name === this.clip?.name) {
+      return;
+    }
     this.fsm.animationComponent.defaultClip = this.clip;
     this.fsm.animationComponent.play();
   }
