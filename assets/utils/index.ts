@@ -17,3 +17,23 @@ const parseNum = (str: string) => parseInt(str.match(REG)?.[1] ?? '0');
 export function orderSpriteFrames(sprites: SpriteFrame[]) {
   return sprites.sort((a, b) => parseNum(a.name) - parseNum(b.name));
 }
+
+export function throttle(fn: Function, delay = 300, context: any) {
+
+  let timer = 0;
+  let isFirst = true;
+  return function(...args: any[]) {
+    if(isFirst) {
+      isFirst = false;
+      fn.call(context, ...args);
+      return;
+    }
+
+    if(timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn.call(context, ...args);
+      clearTimeout(timer);
+      timer = 0;
+    }, delay);
+  }
+}

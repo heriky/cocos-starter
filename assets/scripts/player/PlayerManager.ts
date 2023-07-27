@@ -14,6 +14,7 @@ import { PlayerStateMachine } from './PlayerStateMachine';
 import { EntityManager } from '../../base/EntityManager';
 import { DataManager } from '../../runtime/DataManager';
 import { BlockCheck } from '../../utils/BlockCheck';
+import { throttle } from '../../utils';
 
 const { ccclass } = _decorator;
 
@@ -24,12 +25,19 @@ export class PlayerManager extends EntityManager {
 
   private readonly speed = 1 / 10; // 放在update中时，表示一帧移动 1/10个单位
 
+  private throttleHandler: any = null;
+
+  private isDead = false;
+
   onLoad() {
-    EventManager.instance.on(EventEnums.CTRL, this.inputHandler, this);
+    this.throttleHandler = throttle(this.inputHandler, 200, this);
+    EventManager.instance.on(EventEnums.CTRL, this.throttleHandler, this);
+    EventManager.instance.on(EventEnums.PLAYER_DIE, this.goDie, this);
   }
 
   onDestroy() {
-    EventManager.instance.off(EventEnums.CTRL, this.inputHandler);
+    EventManager.instance.off(EventEnums.CTRL, this.throttleHandler);
+    EventManager.instance.off(EventEnums.PLAYER_DIE, this.goDie);
   }
 
   update(): void {
@@ -53,7 +61,13 @@ export class PlayerManager extends EntityManager {
     this.targetY = this.y;
   }
 
+
   inputHandler(ctrl: CONTORLLER_ENUM) {
+
+    if(this.isDead) {
+      return;
+    }
+
     if (BlockCheck.willBlock(ctrl, { x: this.targetX, y: this.targetY, direction: this.direction! })) {
       
       if (ctrl === CONTORLLER_ENUM.TOP) return this.state = ENTITY_STATE.BLOCK_FRONT;
@@ -140,13 +154,49 @@ export class PlayerManager extends EntityManager {
     const deltaX = Math.abs(this.x - this.targetX);
     if (deltaX <= 0.1 && deltaX > 0) {
       this.x = this.targetX;
-      EventManager.instance.emit(EventEnums.ENEMY_FORWARD);
+      EventManager.instance.emit(EventEnums.PLAYER_MOVE_END);
+      this.attack();
     }
 
     const deltaY = Math.abs(this.y - this.targetY);
     if (deltaY <= 0.1 && deltaY > 0) {
       this.y = this.targetY;
-      EventManager.instance.emit(EventEnums.ENEMY_FORWARD);
+      EventManager.instance.emit(EventEnums.PLAYER_MOVE_END);
+      this.attack();
     }
+  }
+
+  attack() {
+
+    const { enemies } = DataManager.instance;
+
+    if(this.direction === ENTITY_DIRECTION.TOP) {
+      if(enemies.some(enemey => this.x === enemey.x && this.y - 2 === enemey.y)) {
+        this.state = ENTITY_STATE.ATTACK;
+      }
+    }
+
+    if(this.direction === ENTITY_DIRECTION.BOTTOM) {
+      if(enemies.some(enemey => this.x === enemey.x && this.y + 2 === enemey.y)) {
+        this.state = ENTITY_STATE.ATTACK;
+      }
+    }
+
+    if(this.direction === ENTITY_DIRECTION.LEFT) {
+      if(enemies.some(enemey => this.y === enemey.y && this.x - 2 === enemey.y)) {
+        this.state = ENTITY_STATE.ATTACK;
+      }
+    }
+
+    if(this.direction === ENTITY_DIRECTION.RIGHT) {
+      if(enemies.some(enemey => this.y === enemey.y && this.x + 2 === enemey.x)) {
+        this.state = ENTITY_STATE.ATTACK;
+      }
+    }
+  }
+
+  goDie() {
+    this.state = ENTITY_STATE.DIE;
+    this.isDead = true;
   }
 }

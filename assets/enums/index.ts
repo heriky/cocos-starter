@@ -13,8 +13,10 @@ export enum TILE_TYPE_ENUM {
 
 export enum EventEnums {
   NEXT_LEVEL = 'next_level',
-  CTRL = 'CONTORLLER',
-  ENEMY_FORWARD = 'enemy_FORWARD', // 敌人朝向
+  CTRL = 'controller',
+  PLAYER_MOVE_END = 'player_move_end', // 敌人朝向
+  ENEMY_ATTACK = 'enmey_attack',
+  PLAYER_DIE = 'player_die',
 }
 
 export enum CONTORLLER_ENUM {
@@ -43,6 +45,9 @@ export enum STATE_PARAMS_NAME {
   BLOCK_RIGHT = 'BLOCK_RIGHT',
   BLOCK_TURN_LEFT = 'BLOCK_TURN_LEFT',
   BLOCK_TRUN_RIGHT = 'BLOCK_TURN_RIGHT',
+  
+  ATTACK = 'ATTACK',
+  DIE = 'DIE',
 
   DIRECTION = 'DIRECTION', // 
 }
@@ -59,6 +64,9 @@ export enum ENTITY_STATE {
   BLOCK_RIGHT = 'BLOCK_RIGHT',
   BLOCK_TURN_LEFT = 'BLOCK_TURN_LEFT',
   BLOCK_TRUN_RIGHT = 'BLOCK_TURN_RIGHT',
+
+  ATTACK = 'ATTACK',
+  DIE = 'DIE',
 }
 
 export enum ENTITY_DIRECTION {

@@ -6,6 +6,8 @@ import { IdleSubStateMachine } from './IdleSubStateMachine';
 import { TurnSubStateMachine } from './TurnSubStateMachine';
 import { BlockSubStateMachine } from './BlockSubStateMachine';
 import { PlayerManager } from './PlayerManager';
+import { AttackSubStateMachine } from './AttackSubStateMachine';
+import { DieSubStateMachine } from './DieSubStateMachine';
 
 const { ccclass } = _decorator;
 
@@ -47,6 +49,9 @@ export class PlayerStateMachine extends StateMachine {
       STATE_PARAMS_NAME.BLOCK_RIGHT,
       STATE_PARAMS_NAME.BLOCK_TURN_LEFT,
       STATE_PARAMS_NAME.BLOCK_TRUN_RIGHT,
+
+      STATE_PARAMS_NAME.ATTACK,
+      STATE_PARAMS_NAME.DIE
     ];
 
     // 注册【触发器】类型参数
@@ -57,6 +62,7 @@ export class PlayerStateMachine extends StateMachine {
 
     // 注册【数字】类型参数
     this.paramsMap.set(STATE_PARAMS_NAME.DIRECTION, getNumerInitValue());
+
   }
 
   initState() {
@@ -82,13 +88,18 @@ export class PlayerStateMachine extends StateMachine {
       this.stateMap.set(stateName, new BlockSubStateMachine(this, stateName));
     });
 
+    //注册attack状态机
+    this.stateMap.set(ENTITY_STATE.ATTACK, new AttackSubStateMachine(this));
+
+    //注册死亡death状态机
+    this.stateMap.set(ENTITY_STATE.DIE, new DieSubStateMachine(this));
   }
 
   initAnimationEvent() {
     this.animationComponent.on(Animation.EventType.FINISHED, () => {
       // 如果发现不是idle，则恢复到idle状态
       const name = this.animationComponent.defaultClip?.name;
-      const whiteList = ['turn', 'block'];
+      const whiteList = ['turn', 'block', 'attack'];
       if (whiteList.some(item => name?.includes(item))) {
         // this.setParams(STATE_PARAMS_NAME.IDLE, true);
 
@@ -113,7 +124,13 @@ export class PlayerStateMachine extends StateMachine {
       case this.stateMap.get(ENTITY_STATE.BLOCK_TRUN_RIGHT): {
 
         // case是当前状态，params是下一个状态
-        if(this.paramsMap.get(STATE_PARAMS_NAME.BLOCK_FRONT)?.value) {
+        if(this.paramsMap.get(STATE_PARAMS_NAME.DIE)?.value) {
+          this.currentState = this.stateMap.get(ENTITY_STATE.DIE);
+
+        }else if(this.paramsMap.get(STATE_PARAMS_NAME.ATTACK)?.value) {
+          this.currentState = this.stateMap.get(ENTITY_STATE.ATTACK);
+
+        }else if(this.paramsMap.get(STATE_PARAMS_NAME.BLOCK_FRONT)?.value) {
           this.currentState = this.stateMap.get(ENTITY_STATE.BLOCK_FRONT);
 
         } else if(this.paramsMap.get(STATE_PARAMS_NAME.BLOCK_BACK)?.value) {
